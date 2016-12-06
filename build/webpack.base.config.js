@@ -21,13 +21,19 @@ module.exports = {
     filename: '[name].[chunkhash].js'
   },
   resolve: {
+    extensions: ['.js', '.vue'],
     alias: {
-      'public': path.resolve(__dirname, '../public')
+      'public': path.resolve(__dirname, '../public'),
+      'vue': 'vue/dist/vue.js',
+      'src': path.resolve(__dirname, '../src'),
+      'assets': path.resolve(__dirname, '../src/assets'),
+      'components': path.resolve(__dirname, '../src/components')
     }
   },
   module: {
     noParse: /es6-promise\.js$/, // avoid webpack shimming process
     rules: [
+      { test: /\.css$/, loader: "style-loader!css-loader" },
       {
         test: /\.vue$/,
         loader: 'vue-loader',

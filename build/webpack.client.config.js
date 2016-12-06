@@ -7,6 +7,7 @@ const SWPrecachePlugin = require('sw-precache-webpack-plugin')
 
 const config = Object.assign({}, base, {
   resolve: {
+    extensions: ['.js', '.vue'],
     alias: Object.assign({}, base.resolve.alias, {
       'create-api': './create-api-client.js'
     })
