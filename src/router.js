@@ -5,7 +5,7 @@ Vue.use(Router)
 
 import { createListView } from './views/CreateListView'
 // import Main from './components/Main.vue'
-// import UserNameLogin from './components/UserNameLogin.vue'
+import UserNameLogin from './components/UserNameLogin.vue'
 // import Recommand from './components/Recommand.vue'
 // import Collect from './components/Collect.vue'
 // import MyGods from './components/MyGods.vue'
@@ -16,7 +16,7 @@ import { createListView } from './views/CreateListView'
 
 const routes = [
   { path: '/top/:page(\\d+)?', component: createListView('top') },
-  { path: '/', redirect: '/top' }
+  { path: '/', redirect: '/top' },
 
   // { path: '/', name: 'Main', component: Main },
   // { path: '/God/:god_name', name: 'God', component: God },
@@ -26,7 +26,7 @@ const routes = [
   // { path: '/MyGods/:cat', name: 'MyGods', component: MyGods },
   // { path: '/Collect', name: 'Collect', component: Collect },
   // { path: '/Recommand/:cat', name: 'Recommand', component: Recommand },
-  // { path: '/Login', name: 'UserNameLogin', component: UserNameLogin }
+  { path: '/Login', name: 'UserNameLogin', component: UserNameLogin }
 ]
 export default new Router({
   mode: 'history',
