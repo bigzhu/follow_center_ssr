@@ -3,7 +3,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
-import { createListView } from './views/CreateListView'
+// import { createListView } from './views/CreateListView'
 // import Main from './components/Main.vue'
 import UserNameLogin from './components/UserNameLogin.vue'
 // import Recommand from './components/Recommand.vue'
@@ -15,8 +15,7 @@ import UserNameLogin from './components/UserNameLogin.vue'
 // import God from './components/God'
 
 const routes = [
-  { path: '/top/:page(\\d+)?', component: createListView('top') },
-  { path: '/', redirect: '/top' },
+  { path: '/', redirect: '/Login' },
 
   // { path: '/', name: 'Main', component: Main },
   // { path: '/God/:god_name', name: 'God', component: God },
