@@ -13,6 +13,7 @@ function initGodMessage (state, god_name) {
 }
 // state
 export const state = {
+  rich_list: [],
   last_scroll_top: 0, //
   nav_bar_height: 0,
   show_bar: true, // top bar是否显示
@@ -47,6 +48,9 @@ export const state = {
 }
 // mutations
 export const mutations = {
+  SET_RICH_LIST_SERVER (state, rich_list) {
+    state.rich_list = _.unionBy(state.rich_list, rich_list, 'id')
+  },
   REMOVE_THIS_GOD_CAT_MY_GODS (state, god_id) {
     for (var property in state.cat_my_gods) {
       if (state.cat_my_gods.hasOwnProperty(property)) {
