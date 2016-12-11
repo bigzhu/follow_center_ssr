@@ -48,7 +48,7 @@
   import Follow from './Follow'
   import GodRemark from './GodRemark'
   import SocialBadge from './SocialBadge'
-  import '../assets/mobile.css'
+  // import '../assets/mobile.css'
   export default {
     props: {
       god: {

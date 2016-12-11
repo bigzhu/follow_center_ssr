@@ -7,7 +7,9 @@
     </div>
     <!-- ================分割=================== -->
     <div class="card-bz-group">
+
       <div v-for="bio in new_two" class="card-bz">
+          <router-link :to="{ name: 'Bio', params: { god_name: bio.key }}">
           <div class="border-shadow">
             <div class="bio" :style="'background-image:url(' + bio.title_img + ');'">  
             </div>
@@ -18,6 +20,7 @@
               </div>
             </div>
           </div>
+          </router-link>
       </div>
       <!-- ================分割=================== -->
       <div class="ui center aligned header">
