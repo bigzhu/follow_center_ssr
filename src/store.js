@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-Vue.use(Vuex)
+if (!global.window) Vue.use(Vuex)
 import p from '../../lib_bz/module'
 import 'whatwg-fetch'
 import _ from 'lodash'
@@ -11,9 +11,14 @@ function initGodMessage (state, god_name) {
     Vue.set(state.gods_messages, god_name, [])
   }
 }
+function initCatGod (state, cat) {
+  if (state.cat_gods[cat] === undefined) {
+    Vue.set(state.cat_gods, cat, [])
+  }
+}
 // state
 export const state = {
-  rich_list: [],
+  followed_god_count: -1, // 关注的god数
   last_scroll_top: 0, //
   nav_bar_height: 0,
   show_bar: true, // top bar是否显示
@@ -48,9 +53,6 @@ export const state = {
 }
 // mutations
 export const mutations = {
-  SET_RICH_LIST_SERVER (state, rich_list) {
-    state.rich_list = _.unionBy(state.rich_list, rich_list, 'id')
-  },
   REMOVE_THIS_GOD_CAT_MY_GODS (state, god_id) {
     for (var property in state.cat_my_gods) {
       if (state.cat_my_gods.hasOwnProperty(property)) {
@@ -97,7 +99,13 @@ export const mutations = {
     Vue.set(state.cat_my_gods, cat, gods)
   },
   SET_CAT_GODS (state, {cat, gods}) {
-    Vue.set(state.cat_gods, cat, gods)
+    initCatGod(state, cat)
+    let merge_gods = state.cat_gods[cat].concat(gods)
+    let uniq_gods = _.uniqBy(merge_gods, function (d) {
+      return d.id
+    }
+    )
+    state.cat_gods[cat] = uniq_gods
   },
   UNSHIFT_NOT_MY_GOD (state, cat, god) {
     state.cat_gods[cat].unshift(god)
@@ -107,11 +115,6 @@ export const mutations = {
   },
   SET_CATS (state, cats) {
     state.cats = cats
-  },
-  HIGHT_LIGHT (state, text) { // 高亮
-    Vue.nextTick(function () {
-      $('body').highlight(text)
-    })
   },
   REFLASH_TIME_LEN (state) { // 更新时间隔
     if (state.last_reflash_oper) {
@@ -163,20 +166,19 @@ export const mutations = {
   },
   FILTER_SEARCH_MESSAGES (state, search_key) { // 从主线messages中把查找的信息过滤出来，避免页面空白
     if (state.messages.length !== 0) {
-      state.search_messages = _.filter(state.messages,
-        (d) => {
-          if (d.text && d.content) {
-            return (d.text.indexOf(search_key) !== -1 || String(d.content).indexOf(search_key) !== -1)
-          }
-          if (d.text) {
-            return d.text.indexOf(search_key) !== -1
-          }
-          if (d.content) {
-            return String(d.content).indexOf(search_key) !== -1
-          }
-          return false
+      state.search_messages = state.messages.filter(function (d) {
+        console.log(d)
+        if (d.text && d.content) {
+          return (d.text.indexOf(search_key) !== -1 || String(d.content).indexOf(search_key) !== -1)
         }
-      )
+        if (d.text) {
+          return d.text.indexOf(search_key) !== -1
+        }
+        if (d.content) {
+          return String(d.content).indexOf(search_key) !== -1
+        }
+        return false
+      })
     }
   },
   SET_GODS_OLD_MESSAGES (state, {god_name, messages}) {
@@ -237,11 +239,12 @@ export const mutations = {
     state.collect_messages = messages
   },
   SET_NEW_SEARCH_MESSAGES (state, messages) {
-    state.search_messages = _.uniq(
-      state.search_messages.concat(messages), false, function (item, key, a) {
-        return item.id
-      }
+    let merge_messages = state.search_messages.concat(messages)
+    let uniq_messages = _.uniqBy(merge_messages, function (d) {
+      return d.id
+    }
     )
+    state.search_messages = uniq_messages
   },
   SET_NEW_MESSAGES (state, messages) {
     let merge_messages = state.messages.concat(messages)
@@ -250,13 +253,24 @@ export const mutations = {
     }
     )
     state.messages = uniq_messages
-  },
-  SET_USER_INFO (state, user_info) {
-    state.user_info = user_info
   }
 }
 // actions
 export const actions = {
+  checkSocial ({ state, commit, dispatch }, {name, type}) {
+    var parm = {
+      name: name,
+      type: type
+    }
+    return dispatch('get', {url: '/api_social', body: parm, loading: false})
+  },
+  postGod ({ state, commit, dispatch }, {name, cat}) {
+    var parm = {
+      name: name,
+      cat: cat
+    }
+    return dispatch('post', {url: '/api_god', body: parm, loading: false})
+  },
   postBlock ({ state, commit, dispatch }, god_id) {
     let parm = {god_id: god_id}
     return dispatch('post', {url: '/api_block', body: parm, loading: false}).then(function (data) {
@@ -286,7 +300,7 @@ export const actions = {
     if (!limit) {
       limit = 10
     }
-    dispatch('getNew', {god_name: god_name, search_key: search_key, after: after, limit: limit, explore: explore})
+    return dispatch('getNew', {god_name: god_name, search_key: search_key, after: after, limit: limit, explore: explore})
   },
   unfollow ({ state, commit, dispatch }, god_id) {
     return dispatch('delete', '/api_follow/' + god_id).then(function (data) {
@@ -303,11 +317,15 @@ export const actions = {
     })
   },
   getTheMessage ({ state, commit, dispatch }, id) {
-    commit('SET_NEW_LOADING', true)
     let message = _.find(state.messages, function (d) { return d.id === parseInt(id, 10) })
+    // 在god message里再找找
+    if (!message) {
+      for (var god_name in state.gods_messages) {
+        message = _.find(state.gods_messages[god_name], function (d) { return d.id === parseInt(id, 10) })
+      }
+    }
     if (message) {
       commit('SET_THE_MESSAGE', message)
-      commit('SET_LOADING', false)
       return
     }
     let parm = { id: id }
@@ -332,6 +350,7 @@ export const actions = {
     }
     return dispatch('get', {url: '/api_new', body: parm, loading: true}).then(function (data) {
       if (data.messages.length === 0) { // 没有取到数
+        state.followed_god_count = data.followed_god_count
         if (search_key && state.search_messages.length === 0) {
           // oldMessage({ dispatch, state }, {search_key: search_key})
         } else if (god_name && state.gods_messages[god_name].length === 0) { // 没数就查出old
@@ -340,19 +359,18 @@ export const actions = {
           // oldMessage({ dispatch, state }, {limit: 2})
         }
       } else {
+        state.followed_god_count = -1
         if (god_name) { // 查god的new
           commit('SET_GODS_NEW_MESSAGES', {god_name: god_name, messages: data.messages})
         } else if (explore) { // explore
           commit('SET_EXPLORE_NEW_MESSAGES', data.messages)
         } else if (search_key) { // search
           commit('SET_NEW_SEARCH_MESSAGES', data.messages)
-          commit('HIGHT_LIGHT', search_key)
         } else { // main
           commit('SET_NEW_MESSAGES', data.messages)
           commit('REFRESH_UNREAD_MESSAGE_COUNT')
         }
       }
-
       commit('SET_NEW_LOADING', false)
       commit('REFLASH_TIME_LEN')
     })
@@ -370,11 +388,16 @@ export const actions = {
       return data
     })
   },
-  getNotMyGods ({ state, commit, dispatch }, cat) {
+  getPublicGods ({ state, commit, dispatch }, cat) {
     let parm = {
-      cat: cat
+      cat: cat,
+      limit: 10
     }
-    return dispatch('get', {url: '/api_not_my_gods', body: parm}).then(function (data) {
+    let gods = state.cat_gods[cat]
+    if (gods) {
+      parm.before = gods[gods.length - 1].created_date
+    }
+    return dispatch('get', {url: '/api_public_gods', body: parm}).then(function (data) {
       commit('SET_CAT_GODS', {cat: cat, gods: data.gods})
     })
   },
@@ -445,7 +468,7 @@ export const actions = {
     if (!limit) {
       limit = 10
     }
-    dispatch('getOld', {god_name: god_name, search_key: search_key, before: before, limit: limit})
+    return dispatch('getOld', {god_name: god_name, search_key: search_key, before: before, limit: limit})
   },
   getOld ({ state, commit, dispatch }, {god_name, search_key, before, limit}) {
     commit('SET_OLD_LOADING', true)
@@ -474,7 +497,6 @@ export const actions = {
           commit('SET_GODS_OLD_MESSAGES', {god_name: god_name, messages: data.messages})
         } else if (search_key) { // search
           commit('SET_OLD_SEARCH_MESSAGES', data.messages)
-          commit('HIGHT_LIGHT', search_key)
         } else { // main
           commit('SET_OLD_MESSAGES', data.messages)
         }
