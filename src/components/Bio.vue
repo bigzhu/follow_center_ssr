@@ -49,6 +49,7 @@
   export default {
     props: [],
     preFetch: function (store) {
+      store.commit('SET_SITE', 'https://follow.center')
       return store.dispatch('getRichList')
     },
     computed: {
