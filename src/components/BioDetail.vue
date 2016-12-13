@@ -12,33 +12,19 @@
         </div>
       </div>
       <div class="four wide column">
-        <div class="ui segement bio-background">
-          <div class="ui card border-radius">
-            <div class="content">
-              <div class="description align-center">
-                ￥10微信扫一扫<i class="coffee icon"></i>买杯咖啡赞助我
-              </div>
-            </div>
-            <div class="ui small centered image">
-              <img src="/static/img/by_me.b628d93.jpg">
-            </div>
-            <div class="content">
-              <div class="description align-center">
-                <i class="qq icon"></i>答疑QQ群:&nbsp;&nbsp;484391016
-              </div>
-            </div>
-          </div>
-        </div>
+          <right-info></right-info>
       </div>
     </div>
   </div>
 </template>
 <script>
-  import GodItem from './GodItem'
+  // import GodItem from './GodItem'
   import _ from 'lodash'
+  import RightInfo from './RightInfo'
   export default {
     components: {
-      GodItem
+      // GodItem,
+      RightInfo
     },
     data () {
       return {
@@ -99,5 +85,10 @@
   }
   .bio-article {
     padding: 1.5rem;
+  }
+  .bio-god-card.ui.segment.recommand-god-bz {
+    box-shadow: none;
+    border-top: 1px solid #E6E6E6;
+    padding-top: 1rem;
   }
 </style>
