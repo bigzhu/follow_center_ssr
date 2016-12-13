@@ -7,9 +7,8 @@
     </div>
     <!-- ================分割=================== -->
     <div class="card-bz-group">
-
       <div v-for="bio in new_two" class="card-bz">
-          <router-link :to="{ name: 'Bio', params: { god_name: bio.key }}">
+        <router-link :to="{ name: 'BioDetail', params: { god_name: bio.key }}">
           <div class="border-shadow">
             <div class="bio" :style="'background-image:url(' + bio.title_img + ');'">  
             </div>
@@ -20,7 +19,7 @@
               </div>
             </div>
           </div>
-          </router-link>
+        </router-link>
       </div>
       <!-- ================分割=================== -->
       <div class="ui center aligned header">
@@ -29,6 +28,7 @@
       </div>
       <!-- ================分割=================== -->
       <div v-for="bio in others" class="card-bz">
+        <router-link :to="{ name: 'BioDetail', params: { god_name: bio.key }}">
           <div class="border-shadow">
             <div class="bio" :style="'background-image:url(' + bio.title_img + ');'">
             </div>
@@ -39,6 +39,7 @@
               </div>
             </div>
           </div>
+        </router-link>
       </div>
     </div>
   </div>
@@ -65,7 +66,7 @@
       }
     },
     mounted: function () {
-      // this.$store.dispatch('getRichList')
+      this.$store.dispatch('getRichList')
       this.$nextTick(function () {
         // code that assumes this.$el is in-document
       })
