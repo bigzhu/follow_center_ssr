@@ -12,7 +12,7 @@
               <i class="add icon"></i>添加要跟踪的新目标
             </a>
             <div v-show="stat==='input'" class="ui action input">
-              <input @keyup.enter="add" v-model="input_name" id="id_add_god" type="text" placeholder="帐号名，比如 bigzhu">
+              <input @keyup.13="add" v-model="input_name" id="id_add_god" type="text" placeholder="帐号名，比如 bigzhu">
               <div @click="add" class="ui button">添加</div>
             </div>
           </div>
@@ -29,8 +29,9 @@
             </div>
           </div>
           <add-god :god_name="god_name" :call_back="addDone" v-show="stat==='adding'"></add-god>
-          <god-item v-for="god in not_my_gods" :god="god">
+          <god-item v-for="god in not_my_gods" :god="god" class="god-item">
           </god-item>
+          <bottom-loader :el="$el" element_class=".god-item" v-on:bottom="bottomCall"></bottom-loader>
         </div>
       </div>
     </div>
@@ -43,6 +44,7 @@
   import GodItem from './GodItem'
   import Cat from './Cat'
   import AddGod from './AddGod'
+  import BottomLoader from 'bz-bottom-loader'
 
   export default {
     props: {
@@ -59,7 +61,8 @@
     components: {
       Cat,
       AddGod,
-      GodItem
+      GodItem,
+      BottomLoader
     },
     directives: {
     },
@@ -79,7 +82,7 @@
             this.loading = true
           }
           let _this = this
-          this.$store.dispatch('getNotMyGods', this.$route.params.cat).then(function (data) {
+          this.$store.dispatch('getPublicGods', this.$route.params.cat).then(function (data) {
             _this.disableGodLoading()
           })
           this.stat = 'button'
@@ -92,7 +95,7 @@
         this.loading = true
       }
       let _this = this
-      this.$store.dispatch('getNotMyGods', this.$route.params.cat).then(function (data) {
+      this.$store.dispatch('getPublicGods', this.$route.params.cat).then(function (data) {
         _this.disableGodLoading()
       })
       $('body').visibility()
@@ -152,6 +155,9 @@
       }
     },
     methods: {
+      bottomCall: function () {
+        this.$store.dispatch('getPublicGods', this.$route.params.cat)
+      },
       addDone: function () {
         this.stat = 'button'
       },

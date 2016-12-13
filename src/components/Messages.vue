@@ -1,10 +1,29 @@
 <template>
   <div>
-    <div class='ui center aligned basic segment history-bz'>
+    <div v-show="followed_god_count!==0" class='ui center aligned basic segment history-bz'>
       <old></old>
     </div>
+    <div v-show="followed_god_count===0" class="no-message">
+      <img src="../../static/assets/no-message.svg">
+      <p>您还没有关注任何人，从<router-link :to="{'name': 'Recommand'}">寻他</router-link>里面寻找您感兴趣的人吧!</p>
+    </div>
+
+    <transition name="slide-fade">
+      <div v-show="!is_login && show_no_login" class="no-message">
+        <img src="../../static/assets/no-message.svg">
+        <p>
+          <a href="/login.html">登录</a>以后才能看到更广阔的世界哟!
+        </p>
+      </div>
+    </transition>
+
     <message v-for='message in messages' :message='message'>
     </message>
+    <div v-show="followed_god_count>0" class="no-message">
+      <p>好厉害，你已经把所有消息看完啦。再关注点人吧？
+        <router-link :to="{'name': 'Recommand', params: {'cat': 'recommand'}}" :class="{'active': this.$route.name==='Recommand'}">寻他&gt;</router-link>
+      </p> 
+    </div>
     <!--
     <div class='ui active centered inline loader' v-bind:class="{ 'invisible_bz': !new_loading}"></div>
     -->
@@ -13,8 +32,8 @@
 </template>
 
 <script>
+  import {checkLogin} from '../../../lib_bz/functions/user'
   var get_count = 50
-  import store from '../store'
   import $ from 'jquery'
   import _ from 'lodash'
   import Old from './Old.vue'
@@ -28,7 +47,6 @@
       BottomLoader
     },
     watch: {
-      // call again the method if the route changes
       '$route': 'fetchData'
     },
     events: {
@@ -38,14 +56,21 @@
     },
     data: function () {
       return {
+        show_no_login: true
       }
     },
     computed: {
+      is_login () {
+        return checkLogin()
+      },
+      followed_god_count () {
+        return this.$store.state.followed_god_count
+      },
       god_name () {
         if (this.$route.params.god_name) return this.$route.params.god_name.toLowerCase()
       },
       new_loading () {
-        return store.state.new_loading
+        return this.$store.state.new_loading
       },
       messages () {
         if (!this.god_name) return this.$store.state.messages
@@ -53,6 +78,10 @@
       }
     },
     mounted () {
+      if (!this.is_login) {
+        let self = this
+        setTimeout(function () { self.show_no_login = false }, 6000)
+      }
       this.fetchData()
       this.bindScroll()
     },
@@ -119,13 +148,26 @@
 </script>
 
 <style>
-  .invisible_bz {/*隐藏占位*/
-    visibility:hidden;
-  };
-  .ui.segment.history-bz {
-    padding: 0;
-  }
-  .ui.segment.history-bz:first-child {
-    margin-top: 1em;
-  }
+  /* 可以设置不同的进入和离开动画 */
+/* 设置持续时间和动画函数 */
+.slide-fade-enter-active {
+  transition: all .3s ease;
+}
+.slide-fade-leave-active {
+  transition: all .8s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-active {
+  padding-left: 10px;
+  opacity: 0;
+}
+
+.invisible_bz {/*隐藏占位*/
+  visibility:hidden;
+};
+.ui.segment.history-bz {
+  padding: 0;
+}
+.ui.segment.history-bz:first-child {
+  margin-top: 1em;
+}
 </style>
