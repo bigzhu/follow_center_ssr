@@ -3,7 +3,7 @@
     <div class="ui stackable grid">
       <div :class="{'four wide column':is_my, 'six wide column':!is_my}" >
         <div :class="{'my-god-avatar-bz':is_my, 'god-avatar-bz':!is_my}">
-          <a @click="$router.push({ name: 'God', params: { god_name: god.name }})" class="header god-name-bz user-name-a">
+          <a @click="$router.push({ name: 'God', params: { god_name: god.name }})" href="javascript:void(0)" class="header god-name-bz user-name-a">
             <img :src="avatar" class="avatar-img-bz">
           </a>
         </div>
@@ -19,12 +19,14 @@
             <social-badge v-show="god.instagram_user" :call_back="setGodInfo" :info="god.instagram_user" ></social-badge>
             <social-badge v-show="god.facebook_user" :call_back="setGodInfo" :info="god.facebook_user"></social-badge>
           </div>
-          <a @click="$router.push({ name: 'God', params: { god_name: god.name }})" class="header god-name-bz user-name-a">
+          <a @click="$router.push({ name: 'God', params: { god_name: god.name }})" href="javascript:void(0)" class="header god-name-bz user-name-a">
             <h3>{{god.name}}</h3>
           </a>
           <a class="followers-number-bz">
             {{god.followed_count}} 人关注
           </a>
+          <span v-show="god.is_public===1" class="public-personal">公开</span>
+          <span v-show="god.is_public===0" class="public-personal">私人</span>
           <div class="god-discription-bz" v-html="description"  ></div>
 
           <god-remark :remark.sync="remark" :god_id="god.id"></god-remark>
@@ -37,7 +39,7 @@
               <i v-show="loading"class="spinner loading icon"></i>
             </a>
           </div>
-          <follow :god_info="god" :god_id="god.god_id" class="button-to-follow-bz"></follow>
+          <follow v-model="god.followed" :god_id="god.god_id" class="button-to-follow-bz"></follow>
         </div>
       </div>
     </div>
@@ -45,10 +47,10 @@
 </template>
 
 <script>
-  import Follow from './Follow'
-  import GodRemark from './GodRemark'
-  import SocialBadge from './SocialBadge'
-  // import '../assets/mobile.css'
+  // import Follow from './Follow'
+  // import GodRemark from './GodRemark'
+  // import SocialBadge from './SocialBadge'
+  import btoa from '../functions/encode_url'
   export default {
     props: {
       god: {
@@ -86,16 +88,16 @@
         if (!this.god_info || !this.god_info.avatar) {
           return ''
         }
-        return (window.bz_url || '') + '/api_sp/' + window.btoa(window.btoa(this.god_info.avatar))
+        return '/api_sp/' + btoa(this.god_info.avatar)
       },
       god_info: function () {
         return this.getGodInfo()
       }
     },
     components: {
-      SocialBadge,
-      Follow,
-      GodRemark
+      // SocialBadge,
+      // Follow,
+      // GodRemark
     },
     methods: {
       block: function (god) {
@@ -250,6 +252,13 @@
   }
   .hide-god-bz:hover {
     color: #168454;
+  }
+  .god-detail-bz span.public-personal{
+    border: 0.3px solid #A3A3A3;
+    color: #A3A3A3;
+    padding: .2px 5px;
+    margin-left: 1rem;
+    font-size: 0.9rem;
   }
   @media (max-width: 767px) {
     .god-detail-bz {
