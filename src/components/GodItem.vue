@@ -47,9 +47,9 @@
 </template>
 
 <script>
-  // import Follow from './Follow'
-  // import GodRemark from './GodRemark'
-  // import SocialBadge from './SocialBadge'
+  import Follow from './Follow'
+  import GodRemark from './GodRemark'
+  import SocialBadge from './SocialBadge'
   import btoa from '../functions/encode_url'
   export default {
     props: {
@@ -95,9 +95,9 @@
       }
     },
     components: {
-      // SocialBadge,
-      // Follow,
-      // GodRemark
+      SocialBadge,
+      Follow,
+      GodRemark
     },
     methods: {
       block: function (god) {

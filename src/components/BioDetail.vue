@@ -19,12 +19,12 @@
   </div>
 </template>
 <script>
-  // import GodItem from './GodItem'
+  import GodItem from './GodItem'
   import _ from 'lodash'
   import RightInfo from './RightInfo'
   export default {
     components: {
-      // GodItem,
+      GodItem,
       RightInfo
     },
     data () {
