@@ -29,13 +29,19 @@
     },
     preFetch: function (store) {
       store.commit('SET_SITE', 'https://follow.center')
-      let god_name = store.state.route.params.god_name
-      console.log(store.state)
-        return store.dispatch('getRichList').then(function () {
-          return store.dispatch('getRichText', {key: god_name}).then(function (data) {
-            let bio = _.find(store.state.p.rich_list, function (d) { return d.key.toLowerCase() === god_name.toLowerCase() })
-            bio.text = data.rich_text[0].text
-          })
+        let god_name = store.state.route.params.god_name
+
+        return store.dispatch('getRichList').then(function (data) {
+          return store.dispatch('getRichText', {key: god_name})
+        }).then(function (data) {
+          let bio = _.find(store.state.p.rich_list, function (d) { return d.key.toLowerCase() === god_name.toLowerCase() })
+          bio.text = data.rich_text[0].text
+          return data
+        }).then(function (data) {
+          return store.dispatch('getGod', god_name)
+        }).then(function (data) {
+          console.log(data)
+          return data
         })
     },
     data () {

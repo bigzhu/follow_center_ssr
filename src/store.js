@@ -430,6 +430,7 @@ export const actions = {
     parm = {god_name: god_name}
     return dispatch('get', {url: '/api_god', body: parm, loading: loading}).then(function (data) {
       commit('SET_GOD_INFOS', data.god_info)
+      return data
     })
   },
   recordLastMessage ({ state, commit, dispatch }, time) {
