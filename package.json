@@ -19,6 +19,7 @@
     "btoa": "^1.1.2",
     "bz-bottom-loader": "^2.0.10",
     "bz-count-up": "^2.0.8",
+    "bz-login": "^2.1.8",
     "bz-time-len": "^2.0.6",
     "compression": "^1.6.2",
     "es6-promise": "^4.0.5",
