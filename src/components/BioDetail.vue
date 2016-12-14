@@ -13,7 +13,7 @@
         </div>
       </div>
       <div class="four wide column">
-          <right-info></right-info>
+        <right-info></right-info>
       </div>
     </div>
   </div>
@@ -26,6 +26,17 @@
     components: {
       GodItem,
       RightInfo
+    },
+    preFetch: function (store) {
+      store.commit('SET_SITE', 'https://follow.center')
+      let god_name = store.state.route.params.god_name
+      console.log(store.state)
+        return store.dispatch('getRichList').then(function () {
+          return store.dispatch('getRichText', {key: god_name}).then(function (data) {
+            let bio = _.find(store.state.p.rich_list, function (d) { return d.key.toLowerCase() === god_name.toLowerCase() })
+            bio.text = data.rich_text[0].text
+          })
+        })
     },
     data () {
       return {
