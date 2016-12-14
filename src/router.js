@@ -4,7 +4,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 // import Main from './components/Main.vue'
-import UserNameLogin from './components/UserNameLogin.vue'
+// import UserNameLogin from './components/UserNameLogin.vue'
 // import Recommand from './components/Recommand.vue'
 // import Collect from './components/Collect.vue'
 // import MyGods from './components/MyGods.vue'
@@ -14,17 +14,17 @@ import BioDetail from './components/BioDetail.vue'
 // import God from './components/God'
 
 const routes = [
-  { path: '/', redirect: '/Login' },
+  { path: '/', redirect: '/Bio' },
 
   // { path: '/', name: 'Main', component: Main },
   // { path: '/God/:god_name', name: 'God', component: God },
   // { path: '/TheMessage/:id', name: 'TheMessage', component: TheMessage },
   { path: '/BioDetail/:god_name', name: 'BioDetail', component: BioDetail },
-  { path: '/Bio', name: 'Bio', component: Bio },
+  { path: '/Bio', name: 'Bio', component: Bio }
   // { path: '/MyGods/:cat', name: 'MyGods', component: MyGods },
   // { path: '/Collect', name: 'Collect', component: Collect },
   // { path: '/Recommand/:cat', name: 'Recommand', component: Recommand },
-  { path: '/Login', name: 'UserNameLogin', component: UserNameLogin }
+  // { path: '/Login', name: 'UserNameLogin', component: UserNameLogin }
 ]
 export default new Router({
   mode: 'history',
