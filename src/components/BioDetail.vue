@@ -40,7 +40,6 @@
         }).then(function (data) {
           return store.dispatch('getGod', god_name)
         }).then(function (data) {
-          console.log(data)
           return data
         })
     },
